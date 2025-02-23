@@ -1,11 +1,13 @@
 from PIL import Image
 import numpy as np
-import sys
 import os
+import sys
+
+NAME = "pixdiff"
 
 def main(): 
     if len(sys.argv) != 3:
-        print("usage: pixdiff <image1> <image2>")
+        printf("usage: pixdiff <image1> <image2>")
         sys.exit(1)
 
     # assign positional arguments as images
@@ -18,6 +20,13 @@ def main():
     # save the diff image
     save(image1_path, image1, mask, mask_only=False)
 
+def printf(string):
+    """
+    Print messages formatted using the program name. "{NAME}: {string}\\n"
+    Args: string (str to print)
+    Returns: none
+    """
+    sys.stdout.write(f"{NAME}: {string}\n")
 
 def strip_path(path, include_extension=True):
     """
@@ -116,8 +125,8 @@ def save(image1_path, image1, mask, mask_only=False):
     # combine variables back into a filename, original file name + _diff + extension
     file_name = f"{image_name}_diff{image_extension}"
 
-    # print info and save
-    print(f"diff saved as {file_name}")
+    # printf info and save
+    printf(f"diff saved as {file_name}")
     result.save(file_name) 
 
 
