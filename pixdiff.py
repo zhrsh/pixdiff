@@ -8,9 +8,16 @@ def main():
         print("usage: pixdiff <image1> <image2>")
         sys.exit(1)
 
+    # assign positional arguments as images
     image1_path = sys.argv[1]
     image2_path = sys.argv[2]
-    compare(image1_path, image2_path)
+
+    # compare image1 and image2, assign returns
+    image1, mask = compare(image1_path, image2_path)
+
+    # save the diff image
+    save(image1_path, image1, mask, mask_only=False)
+
 
 def strip_path(path, include_extension=True):
     """
@@ -88,19 +95,30 @@ def compare(image1_path, image2_path):
     for y, x in zip(differences[0], differences[1]):
         mask.putpixel((x, y), red_color)
 
-    # overlay the mask on the original image
-    result = Image.alpha_composite(image1, mask)
+    return image1, mask
 
+def save(image1_path, image1, mask, mask_only=False):
+    """
+    Saves either the original image1 overlayed with the diff mask or only the diff mask itself to the current directory or specified directory
+    Args: image1_path (str), image1 (Image obj), mask (Image obj), mask only (optional, defeaults to False)
+    Returns: none
+    """
+    if mask_only == False:
+        # result: an overlay of the mask on the original image
+        result = Image.alpha_composite(image1, mask)
+    elif mask_only == True:
+        # result: the mask alone
+        result = mask
+
+    # split the image_name (e.g. 'my_img') and the image_extension (e.g. '.png')
     image_name, image_extension = strip_path(image1_path, include_extension=False)
 
-    # strip image1_path to base file with extension + _diff + extension
+    # combine variables back into a filename, original file name + _diff + extension
     file_name = f"{image_name}_diff{image_extension}"
 
     # print info and save
     print(f"diff saved as {file_name}")
     result.save(file_name) 
-
-# def save():
 
 
 if __name__ == "__main__":
