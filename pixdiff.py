@@ -26,8 +26,8 @@ def strip_path(path, include_extension=True):
 
     if include_extension == False:
         # strip file extension if include_extension is false:
-        main_file_name, _ = os.path.splitext(file_name)
-        return main_file_name
+        file_name_no_ext, extension = os.path.splitext(file_name)
+        return file_name_no_ext, extension
     else:
         # file name with extension
         return file_name
@@ -91,12 +91,17 @@ def compare(image1_path, image2_path):
     # overlay the mask on the original image
     result = Image.alpha_composite(image1, mask)
 
-    # strip image1_path to base file with extension + _diff
-    file_name = f"{strip_path(image1_path, include_extension=False)}_diff.png"
+    image_name, image_extension = strip_path(image1_path, include_extension=False)
+
+    # strip image1_path to base file with extension + _diff + extension
+    file_name = f"{image_name}_diff{image_extension}"
 
     # print info and save
     print(f"diff saved as {file_name}")
     result.save(file_name) 
+
+# def save():
+
 
 if __name__ == "__main__":
     main()
