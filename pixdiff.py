@@ -76,8 +76,8 @@ def compare(image1_path, image2_path):
     array1 = np.array(image1)
     array2 = np.array(image2)
 
-    # compare the two arrays
-    differences = np.where(array1[:, :, :3] != array2[:, :, :3])  # compare RGB channels only
+    # compare the two arrays including the alpha channel
+    differences = np.where(array1 != array2)  # compare all channels (RGBA)
 
     # create a mask image with the same size as the original images
     mask = Image.new('RGBA', image1.size, (0, 0, 0, 0))  # transparent background
