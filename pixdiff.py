@@ -13,6 +13,14 @@ def main():
     compare(image1_path, image2_path)
 
 def strip_path(path, include_extension=True):
+    """
+    Strip the given full path to the base file name. Can include file extension, can exclude file extension.
+    Args: path (full path to image as strings), include_extension (optional, defaults to True)
+    Returns: if include_extension is True
+                file_name (a string of the base file name WITH extension. e.g. 'img.png')
+             if include_extension is False
+                file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
+    """
     # get base file name
     file_name = os.path.basename(path)
 
@@ -25,6 +33,11 @@ def strip_path(path, include_extension=True):
         return file_name
 
 def load_images(image1_path, image2_path):
+    """
+    Load image1 and image2 from the specified path as PIL objects
+    Args: image1_path, image2_path (paths to images as strings)
+    Returns: image1, image2 (PIL Image objects)
+    """
     # check if the files exist before trying to open them
     if not os.path.exists(image1_path):
         raise FileNotFoundError(f"image not found: {image1_path}")
@@ -42,6 +55,11 @@ def load_images(image1_path, image2_path):
         raise RuntimeError(f"an error occurred while loading images: {e}")
 
 def compare(image1_path, image2_path):
+    """
+    Compare two images pixel by pixel. Each pixel diff is detected by RGBA value of each pixel.
+    Args: image1_path, image2_path (paths to images as strings)
+    Returns: none
+    """
     # load the two images with error handling
     image1, image2 = load_images(image1_path, image2_path)
 
