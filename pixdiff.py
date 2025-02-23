@@ -24,10 +24,26 @@ def strip_path(path, include_extension=True):
         # file name with extension
         return file_name
 
+def load_images(image1_path, image2_path):
+    # check if the files exist before trying to open them
+    if not os.path.exists(image1_path):
+        raise FileNotFoundError(f"image not found: {image1_path}")
+    if not os.path.exists(image2_path):
+        raise FileNotFoundError(f"image not found: {image2_path}")
+
+    try:
+        # load the images
+        image1 = Image.open(image1_path).convert('RGBA')
+        image2 = Image.open(image2_path).convert('RGBA')
+        
+        return image1, image2
+
+    except Exception as e:
+        raise RuntimeError(f"an error occurred while loading images: {e}")
+
 def compare(image1_path, image2_path):
-    # load the two images 
-    image1 = Image.open(image1_path).convert('RGBA')
-    image2 = Image.open(image2_path).convert('RGBA')
+    # load the two images with error handling
+    image1, image2 = load_images(image1_path, image2_path)
 
     # check if images are the same dimensions (width, height)
     if image1.size != image2.size:
