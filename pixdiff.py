@@ -105,9 +105,11 @@ def load_images(image1_path, image2_path):
     """
     # check if the files exist before trying to open them
     if not os.path.exists(image1_path):
-        raise FileNotFoundError(f"image not found: {image1_path}")
+        printf(f"error: image not found: {image1_path}")
+        sys.exit(1)
     if not os.path.exists(image2_path):
-        raise FileNotFoundError(f"image not found: {image2_path}")
+        printf(f"error: image not found: {image2_path}")
+        sys.exit(1)
 
     try:
         # load the images
@@ -117,7 +119,7 @@ def load_images(image1_path, image2_path):
         return image1, image2
 
     except Exception as e:
-        raise RuntimeError(f"an error occurred while loading images: {e}")
+        printf(f"an error occurred while loading images: {e}")
 
 def compare(image1_path, image2_path):
     """
@@ -130,11 +132,13 @@ def compare(image1_path, image2_path):
 
     # check if images are the same dimensions (width, height)
     if image1.size != image2.size:
-        raise ValueError("images must be the same size for comparison.")
+        printf("error: images must be the same size for comparison.")
+        sys.exit(1)
 
     # check if images are too large in dimension (width, height)
-    if image1.size[0] + image1.size[1] == 1024:
-        raise ValueError(f"the image {image1} is too large for comparison.")
+    if image1.size[0] + image2.size[1] > 2048:
+        printf(f"error: the images are too large in dimension for comparison.")
+        sys.exit(1)
         # no need to do image2 because they have the same dimensions
 
     # convert images to NumPy arrays
