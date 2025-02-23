@@ -1,24 +1,28 @@
 from PIL import Image
+import argparse
 import numpy as np
 import os
 import sys
 
 NAME = "pixdiff"
+VERSION = "0.1.0"
 
 def main(): 
-    if len(sys.argv) != 3:
-        printf("usage: pixdiff <image1> <image2>")
-        sys.exit(1)
+    args = run_argparse()
 
     # assign positional arguments as images
-    image1_path = sys.argv[1]
-    image2_path = sys.argv[2]
+    image1_path = args.image1
+    image2_path = args.image2
 
     # compare image1 and image2, assign returns
     image1, mask = compare(image1_path, image2_path)
 
     # save the diff image
-    save(image1_path, image1, mask, mask_only=False)
+    if args.mask:
+        # if user added --mask flag
+        save(image1_path, image1, mask, mask_only=True)
+    else:
+        save(image1_path, image1, mask, mask_only=False)
 
 def printf(string):
     """
@@ -28,14 +32,59 @@ def printf(string):
     """
     sys.stdout.write(f"{NAME}: {string}\n")
 
+def run_argparse():
+    """
+    Parse the user's command line arguments. Runs at the beginning of the program.
+    Args: none
+    Returns: parser.parse_args() (parsed arguments. an argparse obj)
+    """
+
+    parser = argparse.ArgumentParser(
+        description='Find differences between two images pixel by pixel. Recommended for pixel art.',
+        prog=NAME
+    )
+
+    # positional mandatory 1
+    parser.add_argument(
+        'image1',
+        type=str, 
+        help="The first image to compare and create a diff of."
+    )
+
+    # positional mandatory 2
+    parser.add_argument(
+        'image2',
+        type=str, 
+        help="The second image to compare with the first image."
+    )
+
+    # misc
+    parser.add_argument(
+        '--version', '-v', 
+        action='version', 
+        version=f'%(prog)s {VERSION}', 
+        help='Show the program version.'
+    )
+
+    # boolean option flags
+    parser.add_argument(
+        '--mask',
+        action='store_true',  # this will store True if the mask flag is present
+        help='Only save the "diff mask" with no original image under it. Useful for further analysis and visualization in an image/art software.'
+    )
+
+    # return parsed args
+    return parser.parse_args()
+
 def strip_path(path, include_extension=True):
     """
     Strip the given full path to the base file name. Can include file extension, can exclude file extension.
     Args: path (full path to image as strings), include_extension (optional, defaults to True)
-    Returns: if include_extension is True
-                file_name (a string of the base file name WITH extension. e.g. 'img.png')
-             if include_extension is False
-                file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
+    Returns: 
+        if include_extension is True
+            file_name (a string of the base file name WITH extension. e.g. 'img.png')
+        if include_extension is False
+            file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
     """
     # get base file name
     file_name = os.path.basename(path)
