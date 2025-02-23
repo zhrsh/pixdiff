@@ -1,6 +1,6 @@
 - Add optional arguments (argparse?)
     - `--alpha <int alpha>` to control the opacity/alpha value of the diff mask. default is 128.
-    - `--mask` to only save the "diff mask" with no original image under it, useful for further editing in an image/art software
+    - ~~`--mask` to only save the "diff mask" with no original image under it, useful for further editing in an image/art software~~
     - `--no_save` don't save the diff image
     - `--path "<string path>"` to specify the diff result name or path. the default is `<image1>` + `_diff` + `<file_extension>` in the current working directory
     - `--pos` to return the coordinates/positions changed and print to screen.
