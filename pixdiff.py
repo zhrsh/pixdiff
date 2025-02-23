@@ -56,7 +56,7 @@ def load_images(image1_path, image2_path):
 
 def compare(image1_path, image2_path):
     """
-    Compare two images pixel by pixel. Each pixel diff is detected by RGBA value of each pixel.
+    Compare two images pixel by pixel. Each pixel diff is detected comparing the RGBA value of each pixel.
     Args: image1_path, image2_path (paths to images as strings)
     Returns: none
     """
