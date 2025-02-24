@@ -8,7 +8,7 @@ import os
 import sys
 
 NAME = "pixdiff"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 def main(): 
     args = run_argparse()
@@ -22,16 +22,16 @@ def main():
 
     # save the diff image
     if args.save_none:
-        # if user added --no_save flag (perhaps they just want to know the coordinates)
+        # save nothing if the --no_save flag was included (perhaps they just want to know the coordinates)
         printf("no diff image file saved")
     elif args.save_mask:
-        # if user added --mask flag
+        # save diff mask only if --mask flag was included
         save_img(image1_path, image1, mask, mask_only=True)
     else:
-        # default save (image1 + diff mask overlay)
+        # default save (image1 overlayed with the diff mask)
         save_img(image1_path, image1, mask, mask_only=False)
 
-    # save csv file of the coordinates if --csv_save is included
+    # save csv file of the coordinates if --csv_save flag was included
     if args.save_csv:
         file_name, _ = strip_path(image1_path, include_extension=False) # default file name
         save_csv(diff_coords, file_name + "_diff.csv")
@@ -253,10 +253,12 @@ def save_csv(differences, csv_file_path):
 
     # remove duplicates while preserving order
     unique_diff_coords = []
+    # a set to track the coordinates that have already been encountered
     seen = set()
     for coord in diff_coords:
         if coord not in seen:
-            seen.add(coord)
+            # append to both seen and unique_diff_coords
+            seen.add(coord) 
             unique_diff_coords.append(coord)
 
     try:
