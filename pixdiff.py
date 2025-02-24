@@ -223,7 +223,7 @@ def save_img(image1_path, image1, mask, mask_only=False):
     file_name = f"{image_name}_diff{image_extension}"
 
     # printf info and save
-    printf(f"successfully saved differences to {file_name}")
+    printf(f"successfully saved visual differences to {file_name}")
     result.save(file_name) 
 
 
@@ -235,19 +235,24 @@ def save_csv(differences, csv_file_path):
         differences (tuple): tuple containing two arrays (y-coordinates, x-coordinates).
         csv_file_path (str): path to the CSV file where differences will be saved.
     """
-    # check if the differences tuple has the correct format
-    if not isinstance(differences, tuple) or len(differences) != 2:
-        raise ValueError("expected differences to be a tuple containing two arrays (y-coordinates, x-coordinates).")
     
     # get the coordinates of the differences
     diff_coords = list(zip(differences[1], differences[0]))  # (x, y) format
+
+    # remove duplicates while preserving order
+    unique_diff_coords = []
+    seen = set()
+    for coord in diff_coords:
+        if coord not in seen:
+            seen.add(coord)
+            unique_diff_coords.append(coord)
 
     try:
         # write the differences to a CSV file
         with open(csv_file_path, mode='w', newline='') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(['x', 'y'])     # header
-            writer.writerows(diff_coords)   # write the coordinates
+            writer.writerows(unique_diff_coords)   # write the coordinates
         printf(f"successfully saved differences to {csv_file_path}")
 
     except IOError as e:
