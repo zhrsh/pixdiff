@@ -1,5 +1,6 @@
 from PIL import Image
 import argparse
+import csv
 import numpy as np
 import os
 import sys
@@ -14,15 +15,25 @@ def main():
     image1_path = args.image1
     image2_path = args.image2
 
-    # compare image1 and image2, assign returns
-    image1, mask = compare(image1_path, image2_path)
+    image1, mask, diff_coords = compare(image1_path, image2_path)
 
     # save the diff image
-    if args.mask:
+    if args.save_none:
+        # if user added --no_save flag (perhaps they just want to know the coordinates)
+        printf("no diff image file saved")
+    elif args.save_mask:
         # if user added --mask flag
-        save(image1_path, image1, mask, mask_only=True)
+        save_img(image1_path, image1, mask, mask_only=True)
     else:
-        save(image1_path, image1, mask, mask_only=False)
+        # default save (image1 + diff mask overlay)
+        save_img(image1_path, image1, mask, mask_only=False)
+
+    # save csv file of the coordinates if --csv_save is included
+    if args.save_csv:
+        file_name, _ = strip_path(image1_path, include_extension=False) # default file name
+        save_csv(diff_coords, file_name + "_diff.csv")
+
+
 
 def printf(string):
     """
@@ -31,6 +42,8 @@ def printf(string):
     Returns: none
     """
     sys.stdout.write(f"{NAME}: {string}\n")
+
+
 
 def run_argparse():
     """
@@ -44,37 +57,61 @@ def run_argparse():
         prog=NAME
     )
 
-    # positional mandatory 1
+    # =====================================
+    #   positional mandatory
+    # =====================================
+
     parser.add_argument(
         'image1',
         type=str, 
-        help="The first image to compare and create a diff of."
+        help="the first image to compare and create a diff of."
     )
 
-    # positional mandatory 2
     parser.add_argument(
         'image2',
         type=str, 
-        help="The second image to compare with the first image."
+        help="the second image to compare with the first image."
     )
 
-    # misc
+    # =====================================
+    #   misc
+    # =====================================
+
     parser.add_argument(
         '--version', '-v', 
         action='version', 
         version=f'%(prog)s {VERSION}', 
-        help='Show the program version.'
+        help='show the program version.'
     )
 
-    # boolean option flags
+    # =====================================
+    #   boolean option flags
+    # =====================================
+
+    # save options
+
     parser.add_argument(
-        '--mask',
-        action='store_true',  # this will store True if the mask flag is present
-        help='Only save the "diff mask" with no original image under it. Useful for further analysis and visualization in an image/art software.'
+        '--save-mask',
+        action='store_true', # this will store True if the mask flag is present
+        help='save the "diff mask" with no original image under it.'
+    )
+
+    parser.add_argument(
+        '--save-none',
+        action='store_true',
+        help='don\'t save or output the diff image file. will cause pixdiff to not generate anything unless specified by another flag.'
+    )
+
+    parser.add_argument(
+        '--save-csv',
+        action='store_true',
+        help='save every changed pixel by x, y coordinates to a csv file. is not effected by save-none'
     )
 
     # return parsed args
     return parser.parse_args()
+
+
 
 def strip_path(path, include_extension=True):
     """
@@ -96,6 +133,8 @@ def strip_path(path, include_extension=True):
     else:
         # file name with extension
         return file_name
+
+
 
 def load_images(image1_path, image2_path):
     """
@@ -119,15 +158,18 @@ def load_images(image1_path, image2_path):
         return image1, image2
 
     except Exception as e:
-        printf(f"an error occurred while loading images: {e}")
+        printf(f"an unexpected error occurred: {e}")
+
+
 
 def compare(image1_path, image2_path):
     """
     Compare two images pixel by pixel. Each pixel diff is detected comparing the RGBA value of each pixel.
     Args: image1_path, image2_path (paths to images as strings)
-    Returns: none
+    Returns: image1 (Image obj), mask (Image obj), differences (np array with x,y diff coordinates)
     """
-    # load the two images with error handling
+    # load the two images as PIL objects
+    # includes error handling
     image1, image2 = load_images(image1_path, image2_path)
 
     # check if images are the same dimensions (width, height)
@@ -157,9 +199,11 @@ def compare(image1_path, image2_path):
     for y, x in zip(differences[0], differences[1]):
         mask.putpixel((x, y), red_color)
 
-    return image1, mask
+    return image1, mask, differences
 
-def save(image1_path, image1, mask, mask_only=False):
+
+
+def save_img(image1_path, image1, mask, mask_only=False):
     """
     Saves either the original image1 overlayed with the diff mask or only the diff mask itself to the current directory or specified directory
     Args: image1_path (str), image1 (Image obj), mask (Image obj), mask only (optional, defeaults to False)
@@ -179,9 +223,37 @@ def save(image1_path, image1, mask, mask_only=False):
     file_name = f"{image_name}_diff{image_extension}"
 
     # printf info and save
-    printf(f"diff saved as {file_name}")
+    printf(f"successfully saved differences to {file_name}")
     result.save(file_name) 
 
+
+
+def save_csv(differences, csv_file_path):
+    """
+    Write the differences coordinates to a CSV file.
+    Args:
+        differences (tuple): tuple containing two arrays (y-coordinates, x-coordinates).
+        csv_file_path (str): path to the CSV file where differences will be saved.
+    """
+    # check if the differences tuple has the correct format
+    if not isinstance(differences, tuple) or len(differences) != 2:
+        raise ValueError("expected differences to be a tuple containing two arrays (y-coordinates, x-coordinates).")
+    
+    # get the coordinates of the differences
+    diff_coords = list(zip(differences[1], differences[0]))  # (x, y) format
+
+    try:
+        # write the differences to a CSV file
+        with open(csv_file_path, mode='w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(['x', 'y'])     # header
+            writer.writerows(diff_coords)   # write the coordinates
+        printf(f"successfully saved differences to {csv_file_path}")
+
+    except IOError as e:
+        printf(f"error writing to file {csv_file_path}: {e}")
+    except Exception as e:
+        printf(f"an unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     main()
