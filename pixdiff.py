@@ -14,8 +14,9 @@ def main():
     # assign positional arguments as images
     image1_path = args.image1
     image2_path = args.image2
+    alpha = args.alpha
 
-    image1, mask, diff_coords = compare(image1_path, image2_path)
+    image1, mask, diff_coords = compare(image1_path, image2_path, alpha)
 
     # save the diff image
     if args.save_none:
@@ -93,7 +94,7 @@ def run_argparse():
     parser.add_argument(
         '--save-mask',
         action='store_true', # this will store True if the mask flag is present
-        help='save the "diff mask" with no original image under it.'
+        help='save the diff mask with no original image under it.'
     )
 
     parser.add_argument(
@@ -106,6 +107,15 @@ def run_argparse():
         '--save-csv',
         action='store_true',
         help='save every changed pixel by x, y coordinates to a csv file. is not effected by save-none'
+    )
+
+    # RGBA options 
+
+    parser.add_argument('--alpha', type=int, 
+        choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
+        default=128, # default value
+        metavar="INT",
+        help='an integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128)'
     )
 
     # return parsed args
@@ -162,7 +172,7 @@ def load_images(image1_path, image2_path):
 
 
 
-def compare(image1_path, image2_path):
+def compare(image1_path, image2_path, alpha_value=128):
     """
     Compare two images pixel by pixel. Each pixel diff is detected comparing the RGBA value of each pixel.
     Args: image1_path, image2_path (paths to images as strings)
@@ -193,7 +203,7 @@ def compare(image1_path, image2_path):
     # create a mask image with the same size as the original images
     mask = Image.new('RGBA', image1.size, (0, 0, 0, 0))  # transparent background
 
-    red_color = (255, 0, 0, 128)  # red with 50% transparency
+    red_color = (255, 0, 0, alpha_value)  # red with 50% transparency
 
     # set the pixels in the mask to red where differences are found
     for y, x in zip(differences[0], differences[1]):
