@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-from PIL import Image
 import argparse
 import csv
-import numpy as np
 import os
 import sys
+
+from PIL import Image
+import numpy as np
+
 
 NAME = "pixdiff"
 VERSION = "0.2.0"
@@ -170,11 +172,11 @@ def strip_path(path, include_extension=False, include_path=False):
         if include_extension is False
             file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
     """
-    if include_path == False:
+    if include_path is False:
         # get base file name without path
         path = os.path.basename(path)
 
-    if include_extension == False:
+    if include_extension is False:
         # strip file extension if include_extension is false:
         file_name_no_ext, extension = os.path.splitext(path)
         return file_name_no_ext, extension
@@ -206,7 +208,8 @@ def load_images(image1_path, image2_path):
         return image1, image2
 
     except Exception as e:
-        printf(f"an unexpected error occurred: {e}")
+        printf(f"an unexpected error occurred:\n{e}")
+        raise  # re-raise the exception to allow it to propagate
 
 
 
@@ -220,16 +223,16 @@ def compare(image1_path, image2_path, alpha_value=128):
     # includes error handling
     image1, image2 = load_images(image1_path, image2_path)
 
-    # check if images are the same dimensions (width, height)
+    # check if images are the same in resolution (width, height)
     if image1.size != image2.size:
         printf("error: images must be the same size for comparison.")
         sys.exit(1)
 
-    # check if images are too large in dimension (width, height)
+    # check if images are too large in resolution (width, height)
     if image1.size[0] + image2.size[1] > 2048:
-        printf(f"error: the images are too large in dimension for comparison.")
+        printf("error: the images are too large in resolution for comparison.")
         sys.exit(1)
-        # no need to do image2 because they have the same dimensions
+        # no need to do image2 because they have the same resolution
 
     # convert images to NumPy arrays
     array1 = np.array(image1)
@@ -264,12 +267,12 @@ def save_img(image1, mask, output_path, mask_only=False):
     """
     png_file_path = f"{output_path}.png"
 
-    if mask_only == False:
-        # result: an overlay of the mask on the original image
-        result = Image.alpha_composite(image1, mask)
-    elif mask_only == True:
+    if mask_only is True:
         # result: the mask alone
         result = mask
+    else:
+        # result: an overlay of the mask on the original image
+        result = Image.alpha_composite(image1, mask)
 
     try:
         # printf info and save
@@ -279,6 +282,7 @@ def save_img(image1, mask, output_path, mask_only=False):
         printf(f"the file path '{png_file_path}' does not exist.")
     except Exception as e:
         printf(f"an unexpected error occurred:\n{e}")
+        raise  # re-raise the exception to allow it to propagate
 
 
 
@@ -307,7 +311,7 @@ def save_csv(differences, output_path):
 
     try:
         # write the differences to a CSV file
-        with open(csv_file_path, mode='w', newline='') as csv_file:
+        with open(csv_file_path, mode='w', newline='', encoding='utf-8') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(['x', 'y'])     # header
             writer.writerows(unique_diff_coords)   # write the coordinates
@@ -319,6 +323,7 @@ def save_csv(differences, output_path):
         printf(f"error writing to file {csv_file_path}:\n{e}")
     except Exception as e:
         printf(f"an unexpected error occurred:\n{e}")
+        raise  # re-raise the exception to allow it to propagate
 
 if __name__ == "__main__":
     main()
