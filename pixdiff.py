@@ -53,7 +53,12 @@ import numpy as np
 NAME = "pixdiff"
 VERSION = "0.2.0"
 
-def main(): 
+def main():
+    """
+    Main function. Self explanatory
+    Args: none
+    Returns: none
+    """
     args = run_argparse()
 
     # assign arguments as variables
@@ -72,7 +77,7 @@ def main():
         output_path = args.path
     else:
         # if user doesn't specify the --path arg, use default
-        path_no_ext = os.path.splitext(image1_path)[0] # remove the file extension for image1 
+        path_no_ext = os.path.splitext(image1_path)[0] # remove the file extension for image1
         output_path = f"{path_no_ext}_diff"
 
     # =====================================
@@ -91,7 +96,8 @@ def main():
 
     # save the diff image
     if args.save_none:
-        # save nothing if the --no_save flag was included (perhaps they just want to know the coordinates)
+        # save nothing if the --no_save flag was included
+        # (perhaps they just want to know the coordinates)
         printf("no diff image file saved")
     elif args.save_mask:
         # save diff mask only if --mask flag was included
@@ -123,12 +129,13 @@ def printf(string):
 def run_argparse():
     """
     Parse the user's command line arguments. Runs at the beginning of the program.
+
     Args: none
     Returns: parser.parse_args() (parsed arguments. an argparse obj)
     """
 
     parser = argparse.ArgumentParser(
-        description='Find differences between two images pixel by pixel. Recommended for pixel art.',
+        description='A simple script to identify pixel-by-pixel differences between two images.',
         prog=NAME
     )
 
@@ -138,13 +145,13 @@ def run_argparse():
 
     parser.add_argument(
         'image1',
-        type=str, 
+        type=str,
         help="the first image to compare and create a diff of."
     )
 
     parser.add_argument(
         'image2',
-        type=str, 
+        type=str,
         help="the second image to compare with the first image."
     )
 
@@ -154,8 +161,8 @@ def run_argparse():
 
     parser.add_argument(
         '--version', '-v', 
-        action='version', 
-        version=f'%(prog)s {VERSION}', 
+        action='version',
+        version=f'%(prog)s {VERSION}',
         help='show the program version.'
     )
 
@@ -183,15 +190,15 @@ def run_argparse():
         help='save every changed pixel by x, y coordinates to a csv file. is not effected by save-none'
     )
 
-    parser.add_argument('--path', type=str, 
+    parser.add_argument('--path', type=str,
         default=None,
         metavar="PATH_TO_OUTPUT_FILE",
         help='specify the name and path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
-    # RGBA options 
+    # RGBA options
 
-    parser.add_argument('--alpha', type=int, 
+    parser.add_argument('--alpha', type=int,
         choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
         default=128, # default value
         metavar="ALPHA_VALUE",
@@ -205,13 +212,17 @@ def run_argparse():
 
 def strip_path(path, include_extension=False, include_path=False):
     """
-    Strip the given full path to the base file name, strip the extension only, or both. Can include file extension, can exclude file extension.
+    Strip the given full path to the base file name, strip the extension only, or both. 
+    Can include file extension, can exclude file extension.
+
     Args: path (full path to image as strings), include_extension (optional, defaults to True)
     Returns: 
         if include_extension is False
-            file_name (a string of the base file name WITH extension. e.g. 'img.png')
+            file_name 
+            (a string of the base file name WITH extension. e.g. 'img.png')
         if include_extension is False
-            file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
+            file_name_no_ext, extension 
+            (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
     """
     if include_path is False:
         # get base file name without path
@@ -229,7 +240,8 @@ def strip_path(path, include_extension=False, include_path=False):
 
 def load_images(image1_path, image2_path):
     """
-    Load image1 and image2 from the specified path as PIL objects
+    Load image1 and image2 from the specified path as PIL objects.
+
     Args: image1_path, image2_path (paths to images as strings)
     Returns: image1, image2 (PIL Image objects)
     """
@@ -245,7 +257,7 @@ def load_images(image1_path, image2_path):
         # load the images
         image1 = Image.open(image1_path).convert('RGBA')
         image2 = Image.open(image2_path).convert('RGBA')
-        
+
         return image1, image2
 
     except Exception as e:
@@ -256,7 +268,9 @@ def load_images(image1_path, image2_path):
 
 def compare(image1_path, image2_path, alpha_value=128):
     """
-    Compare two images pixel by pixel. Each pixel diff is detected comparing the RGBA value of each pixel.
+    Compare two images pixel by pixel. 
+    Each pixel diff is detected comparing the RGBA value of each pixel.
+
     Args: image1_path, image2_path (paths to images as strings)
     Returns: image1 (Image obj), mask (Image obj), differences (np array with x,y diff coordinates)
     """
@@ -297,7 +311,9 @@ def compare(image1_path, image2_path, alpha_value=128):
 
 def save_img(image1, mask, output_path, mask_only=False):
     """
-    Saves either the original image1 overlayed with the diff mask or only the diff mask itself to the current directory or specified directory
+    Saves either the original image1 overlayed with the diff mask or only the 
+    diff mask itself to the current directory or specified directory
+    
     Args: 
         image1_path (str)
         image1 (Image obj)
@@ -333,8 +349,9 @@ def save_csv(differences, output_path):
     Args:
         differences (tuple): tuple containing two arrays (y-coordinates, x-coordinates).
         output_path (str): path to the CSV file where differences will be saved (write). No extension in order to force to .csv
+    Returns: none
     """
-    
+
     csv_file_path = f"{output_path}.csv"
 
     # get the coordinates of the differences
@@ -357,7 +374,7 @@ def save_csv(differences, output_path):
             writer.writerow(['x', 'y'])     # header
             writer.writerows(unique_diff_coords)   # write the coordinates
         printf(f"successfully saved differences to {csv_file_path}")
-    
+
     except FileNotFoundError:
         printf(f"the file path '{csv_file_path}' does not exist.")
     except IOError as e:
