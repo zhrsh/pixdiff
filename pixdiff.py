@@ -192,7 +192,7 @@ def run_argparse():
 
     parser.add_argument('--path', type=str,
         default=None,
-        metavar="PATH_TO_OUTPUT_FILE",
+        metavar="<OUTPUT_FILE_PATH>",
         help='specify the name and path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
@@ -201,7 +201,7 @@ def run_argparse():
     parser.add_argument('--alpha', type=int,
         choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
         default=128, # default value
-        metavar="ALPHA_VALUE",
+        metavar="<ALPHA_VALUE>",
         help='an integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128)'
     )
 
