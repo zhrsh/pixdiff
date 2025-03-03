@@ -13,12 +13,38 @@ VERSION = "0.2.0"
 def main(): 
     args = run_argparse()
 
-    # assign positional arguments as images
+    # assign arguments as variables
     image1_path = args.image1
     image2_path = args.image2
-    alpha = args.alpha
+    alpha = args.alpha # an optional flag that defaults to 128 if not included
 
+    # =====================================
+    #   create output path
+    # =====================================
+
+    # output path is where the diff will be saved + file name
+    # note: extensions will be added later on in the save functions (forces csv and png output)
+    if args.path:
+        # custom path/name for output file
+        output_path = args.path
+    else:
+        # if user doesn't specify the --path arg, use default
+        path_no_ext = os.path.splitext(image1_path)[0] # remove the file extension for image1 
+        output_path = f"{path_no_ext}_diff"
+
+    # =====================================
+    #   comparisson of image1 and image2
+    # =====================================
+
+    # results in image1 Image obj, mask Image obj, and diff_coords np array
+    #   image1 is the original image1 as an Image obj
+    #   mask is an Image obj that colors the pixels that are different in image1 and image2
+    #   diff_coords is an np array for csv output
     image1, mask, diff_coords = compare(image1_path, image2_path, alpha)
+
+    # =====================================
+    #   saving the output file (image)
+    # =====================================
 
     # save the diff image
     if args.save_none:
@@ -26,15 +52,18 @@ def main():
         printf("no diff image file saved")
     elif args.save_mask:
         # save diff mask only if --mask flag was included
-        save_img(image1_path, image1, mask, mask_only=True)
+        save_img(image1, mask, output_path, mask_only=True)
     else:
         # default save (image1 overlayed with the diff mask)
-        save_img(image1_path, image1, mask, mask_only=False)
+        save_img(image1, mask, output_path, mask_only=False)
+
+    # =====================================
+    #   saving the output file (csv)
+    # =====================================
 
     # save csv file of the coordinates if --csv_save flag was included
     if args.save_csv:
-        file_name, _ = strip_path(image1_path, include_extension=False) # default file name
-        save_csv(diff_coords, file_name + "_diff.csv")
+        save_csv(diff_coords, output_path)
 
 
 
@@ -111,12 +140,18 @@ def run_argparse():
         help='save every changed pixel by x, y coordinates to a csv file. is not effected by save-none'
     )
 
+    parser.add_argument('--path', type=str, 
+        default=None,
+        metavar="PATH_TO_OUTPUT_FILE",
+        help='specify the name and path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
+    )
+
     # RGBA options 
 
     parser.add_argument('--alpha', type=int, 
         choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
         default=128, # default value
-        metavar="INT",
+        metavar="ALPHA_VALUE",
         help='an integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128)'
     )
 
@@ -125,26 +160,27 @@ def run_argparse():
 
 
 
-def strip_path(path, include_extension=True):
+def strip_path(path, include_extension=False, include_path=False):
     """
-    Strip the given full path to the base file name. Can include file extension, can exclude file extension.
+    Strip the given full path to the base file name, strip the extension only, or both. Can include file extension, can exclude file extension.
     Args: path (full path to image as strings), include_extension (optional, defaults to True)
     Returns: 
-        if include_extension is True
+        if include_extension is False
             file_name (a string of the base file name WITH extension. e.g. 'img.png')
         if include_extension is False
             file_name_no_ext, extension (a string of the base file name WITHOUT extension. e.g. 'img' and its extension)
     """
-    # get base file name
-    file_name = os.path.basename(path)
+    if include_path == False:
+        # get base file name without path
+        path = os.path.basename(path)
 
     if include_extension == False:
         # strip file extension if include_extension is false:
-        file_name_no_ext, extension = os.path.splitext(file_name)
+        file_name_no_ext, extension = os.path.splitext(path)
         return file_name_no_ext, extension
     else:
         # file name with extension
-        return file_name
+        return path
 
 
 
@@ -215,12 +251,19 @@ def compare(image1_path, image2_path, alpha_value=128):
 
 
 
-def save_img(image1_path, image1, mask, mask_only=False):
+def save_img(image1, mask, output_path, mask_only=False):
     """
     Saves either the original image1 overlayed with the diff mask or only the diff mask itself to the current directory or specified directory
-    Args: image1_path (str), image1 (Image obj), mask (Image obj), mask only (optional, defeaults to False)
+    Args: 
+        image1_path (str)
+        image1 (Image obj)
+        mask (Image obj), 
+        output_path (str): where the output file will be written. No extension in order to force to .png
+        mask_only (optional, defeaults to False)
     Returns: none
     """
+    png_file_path = f"{output_path}.png"
+
     if mask_only == False:
         # result: an overlay of the mask on the original image
         result = Image.alpha_composite(image1, mask)
@@ -228,26 +271,27 @@ def save_img(image1_path, image1, mask, mask_only=False):
         # result: the mask alone
         result = mask
 
-    # split the image_name (e.g. 'my_img') and the image_extension (e.g. '.png')
-    image_name, image_extension = strip_path(image1_path, include_extension=False)
-
-    # combine variables back into a filename, original file name + _diff + extension
-    file_name = f"{image_name}_diff{image_extension}"
-
-    # printf info and save
-    printf(f"successfully saved visual differences to {file_name}")
-    result.save(file_name) 
-
+    try:
+        # printf info and save
+        result.save(png_file_path) 
+        printf(f"successfully saved visual differences to {png_file_path}")
+    except FileNotFoundError:
+        printf(f"the file path '{png_file_path}' does not exist.")
+    except Exception as e:
+        printf(f"an unexpected error occurred:\n{e}")
 
 
-def save_csv(differences, csv_file_path):
+
+def save_csv(differences, output_path):
     """
     Write the differences coordinates to a CSV file.
     Args:
         differences (tuple): tuple containing two arrays (y-coordinates, x-coordinates).
-        csv_file_path (str): path to the CSV file where differences will be saved.
+        output_path (str): path to the CSV file where differences will be saved (write). No extension in order to force to .csv
     """
     
+    csv_file_path = f"{output_path}.csv"
+
     # get the coordinates of the differences
     diff_coords = list(zip(differences[1], differences[0]))  # (x, y) format
 
