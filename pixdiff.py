@@ -312,11 +312,13 @@ def save_csv(differences, output_path):
             writer.writerow(['x', 'y'])     # header
             writer.writerows(unique_diff_coords)   # write the coordinates
         printf(f"successfully saved differences to {csv_file_path}")
-
+    
+    except FileNotFoundError:
+        printf(f"the file path '{csv_file_path}' does not exist.")
     except IOError as e:
-        printf(f"error writing to file {csv_file_path}: {e}")
+        printf(f"error writing to file {csv_file_path}:\n{e}")
     except Exception as e:
-        printf(f"an unexpected error occurred: {e}")
+        printf(f"an unexpected error occurred:\n{e}")
 
 if __name__ == "__main__":
     main()
