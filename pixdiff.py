@@ -1,5 +1,46 @@
 #!/usr/bin/env python3
 
+# Author: Zahra A. S. <182934048+zhrsh@users.noreply.github.com>
+
+"""
+pixdiff.py
+
+A simple script to identify pixel-by-pixel differences between two images. 
+Recommended for pixel art.
+
+It uses Pillow to interperet images into objects and into NumPy arrays for better performance.
+The RGBA value of each pixel of the two array is compared. The differences are stored into 
+another NumPy array. The result of the diff is configurable, with the default setting generating 
+an output file that overlays a color mask on the first image, highlighting the pixels where 
+differences are found.
+
+Below are the commands and optional flags you can use, which can also be viewed using --help || -h
+
+positional arguments:
+    image1
+        the first image to compare and create a diff of.
+    image2
+        the second image to compare with the first image.
+
+optional arguments:
+    -h, --help
+        show this help message and exit
+    --version, -v 
+        show the program version.
+    --save-mask    
+        save the diff mask with no original image under it.
+    --save-none    
+        don't save or output the diff image file.
+        will cause pixdiff to not generate anything
+        unless specified by another flag.
+    --save-csv     
+        save every changed pixel by x, y coordinates
+        to a csv file. is not effected by save-none
+    --alpha INT    
+        an integer value from 1 to 255 that determines
+        the diff mask opacity/alpha value (default: 128)
+"""
+
 import argparse
 import csv
 import os
