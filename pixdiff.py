@@ -12,7 +12,7 @@ A simple python script to identify pixel-by-pixel differences between two images
 Only tested for pixel art.
 
 It uses Pillow (PIL) to interperet images into objects and into NumPy arrays for 
-better performance. The RGBA value of each pixel of the two array is compared. 
+better performance. The RGBA value of each pixel of the two arrays is compared. 
 The differences are then stored into another NumPy array. The result of the diff 
 is configurable, with the default setting generating an output file that overlays 
 a color mask on the first image, highlighting the pixels where differences are found.
@@ -170,7 +170,7 @@ def run_argparse():
     parser.add_argument(
         '--save-csv',
         action='store_true',
-        help='save every changed pixel by x, y coordinates to a csv file. is not effected by save-none'
+        help='save every changed pixel by x, y coordinates to a csv file. The CSV file is not affected by --save-none.'
     )
 
     parser.add_argument('--path', type=str,
