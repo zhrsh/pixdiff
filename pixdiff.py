@@ -29,12 +29,15 @@ import csv
 import os
 import sys
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import numpy as np
+
 
 
 NAME = "pixdiff"
 VERSION = "0.2.0"
+
+
 
 def main():
     """
@@ -221,30 +224,33 @@ def strip_path(path, include_extension=False, include_path=False):
 
 
 
-def load_images(image1_path, image2_path):
+def load_image(image_path):
     """
-    Load image1 and image2 from the specified path as PIL objects.
+    Load an image from the specified path as a PIL object.
 
-    Args: image1_path, image2_path (paths to images as strings)
-    Returns: image1, image2 (PIL Image objects)
+    Args: image_path (path to image as a string)
+    Returns: image (PIL Image object)
     """
-    # check if the files exist before trying to open them
-    if not os.path.exists(image1_path):
-        printf(f"error: image not found: {image1_path}")
-        sys.exit(1)
-    if not os.path.exists(image2_path):
-        printf(f"error: image not found: {image2_path}")
+    if not os.path.exists(image_path):
+        printf(f"error: image not found: {image_path}")
         sys.exit(1)
 
     try:
-        # load the images
-        image1 = Image.open(image1_path).convert('RGBA')
-        image2 = Image.open(image2_path).convert('RGBA')
-
-        return image1, image2
-
+        return Image.open(image_path).convert('RGBA')
+    except FileNotFoundError:
+        printf(f"error: file not found: {image_path}")
+        sys.exit(1)
+    except UnidentifiedImageError:
+        printf(f"error: the file at {image_path} is not a valid image.")
+        sys.exit(1)
+    except Image.DecompressionBombError:
+        printf(f"error: the image at {image_path} is too large and may be a decompression bomb.")
+        sys.exit(1)
+    except IOError as e:
+        printf(f"error: an I/O error occurred while loading {image_path}:\n{e}")
+        sys.exit(1)
     except Exception as e:
-        printf(f"an unexpected error occurred:\n{e}")
+        printf(f"error: an unexpected error occurred:\n{e}")
         raise  # re-raise the exception to allow it to propagate
 
 
@@ -259,7 +265,8 @@ def compare(image1_path, image2_path, alpha_value=128):
     """
     # load the two images as PIL objects
     # includes error handling
-    image1, image2 = load_images(image1_path, image2_path)
+    image1 = load_image(image1_path)
+    image2 = load_image(image2_path)
 
     # check if images are the same in resolution (width, height)
     if image1.size != image2.size:
@@ -316,12 +323,18 @@ def save_img(image1, mask, output_path, mask_only=False):
 
     try:
         # printf info and save
-        result.save(png_file_path) 
+        result.save(png_file_path, 'PNG')
         printf(f"successfully saved visual differences to {png_file_path}")
     except FileNotFoundError:
-        printf(f"the file path '{png_file_path}' does not exist.")
+        printf(f"error: the file path '{png_file_path}' does not exist.")
+    except IOError as e:
+        printf(f"error: an I/O error occurred while saving the image:\n{e}")
+    except ValueError as e:
+        printf(f"error: an invalid value occurred while saving the image:\n{e}")
+    except Image.DecompressionBombError:
+        printf("error: the image is too large and may be a decompression bomb.")
     except Exception as e:
-        printf(f"an unexpected error occurred:\n{e}")
+        printf(f"error: an unexpected error occurred:\n{e}")
         raise  # re-raise the exception to allow it to propagate
 
 
@@ -347,7 +360,7 @@ def save_csv(differences, output_path):
     for coord in diff_coords:
         if coord not in seen:
             # append to both seen and unique_diff_coords
-            seen.add(coord) 
+            seen.add(coord)
             unique_diff_coords.append(coord)
 
     try:
@@ -359,11 +372,11 @@ def save_csv(differences, output_path):
         printf(f"successfully saved differences to {csv_file_path}")
 
     except FileNotFoundError:
-        printf(f"the file path '{csv_file_path}' does not exist.")
+        printf(f"error: the file path '{csv_file_path}' does not exist.")
     except IOError as e:
-        printf(f"error writing to file {csv_file_path}:\n{e}")
+        printf(f"error: error writing to file {csv_file_path}:\n{e}")
     except Exception as e:
-        printf(f"an unexpected error occurred:\n{e}")
+        printf(f"error: an unexpected error occurred:\n{e}")
         raise  # re-raise the exception to allow it to propagate
 
 if __name__ == "__main__":
