@@ -126,18 +126,33 @@ def run_argparse():
     )
 
     # =====================================
+    #   initializing groups
+    # =====================================
+
+    save_opts = parser.add_argument_group(
+        'save options', 
+        'options for exporting files.'
+    )
+    rgba_opts = parser.add_argument_group(
+        'rgba options', 
+        'options for processing output files.'
+    )
+
+    # =====================================
     #   positional mandatory
     # =====================================
 
     parser.add_argument(
         'image1',
         type=str,
+        metavar="IMAGE1",
         help="the first image to compare and create a diff of."
     )
 
     parser.add_argument(
         'image2',
         type=str,
+        metavar="IMAGE2",
         help="the second image to compare with the first image."
     )
 
@@ -153,41 +168,45 @@ def run_argparse():
     )
 
     # =====================================
-    #   boolean option flags
+    #   boolean flags
     # =====================================
 
     # save options
 
-    parser.add_argument(
+    save_opts.add_argument(
         '--save-mask',
         action='store_true', # this will store True if the mask flag is present
         help='save the diff mask with no original image under it.'
     )
 
-    parser.add_argument(
+    save_opts.add_argument(
         '--save-none',
         action='store_true',
         help='don\'t save or output the diff image file. will cause pixdiff to not generate anything unless specified by another flag.'
     )
 
-    parser.add_argument(
+    save_opts.add_argument(
         '--save-csv',
         action='store_true',
-        help='save every changed pixel by x, y coordinates to a csv file. The CSV file is not affected by --save-none.'
+        help='save every changed pixel by x, y coordinates to a csv file. the CSV file is not affected by --save-none.'
     )
 
-    parser.add_argument('--path', type=str,
+    # =====================================
+    #   optional arguments
+    # =====================================
+
+    save_opts.add_argument('--path', type=str,
         default=None,
-        metavar="<OUTPUT_FILE_PATH>",
+        metavar="<FILE_PATH>",
         help='specify the name and relative path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
     # RGBA options
 
-    parser.add_argument('--alpha', type=int,
+    rgba_opts.add_argument('--alpha', type=int,
         choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
         default=128, # default value
-        metavar="<ALPHA_VALUE>",
+        metavar="<A>",
         help='an integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128)'
     )
 
