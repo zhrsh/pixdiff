@@ -6,6 +6,12 @@ It uses Pillow (PIL) to interperet images into objects and into NumPy arrays for
 
 Currently, you are only able to run this script using the names of the images (if in the same directory) or the relative path to the images, not an absolute path. The visual output will always be a PNG file, regardless of your input file.
 
+## Dependencies
+
+- Python 3.9.6 or higher
+- [Pillow](https://github.com/python-pillow/Pillow/)
+- [NumPy](https://numpy.org)
+
 ## Basic Usage
 
 The most basic way to use this script is to run it without any flags:
@@ -33,13 +39,13 @@ If I run the default usage:
 pixdiff example1.png example2.png
 ```
 
-The script will output `example1_diff.png`, which is `example1.png` overlayed by the differences found in `example2.png` (the highlights on the leaves and trunk):
+The script will output `example1_diff.png`, which looks like this:
 
 <p float="left">
   <img src="readme_images/example_default.png" width="256">
 </p>
 
-By default, the mask overlay is the color red  with an alpha value of 128. This can be modified using optional arguments.
+This is just `example1.png` overlayed by the differences found in `example2.png` (the highlights on the leaves and trunk). By default, the mask overlay is the color red  with an alpha value of 128. This can be modified using optional arguments.
 
 ## Optional Arguments
 
@@ -129,6 +135,6 @@ pixdiff example1.png example2.png --save-csv --save-none
 
 ## License
 
-This script, pixdiff.py and example_batch.sh, is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
+pixdiff.py and example_batch.sh, are licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
 
 <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">The example images in this README</span> by <span property="cc:attributionName">Zahra A. S.</span> are licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""></a></p>
