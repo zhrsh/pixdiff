@@ -4,12 +4,12 @@
     - ~~`--no_save` don't save the diff image~~
     - ~~`--path "<string path>"` to specify the diff result name or path. the default is `<image1>` + `_diff` + `<file_extension>` in the current working directory~~
     - ~~`--pos` to return the coordinates/positions changed and print to screen.~~
-    - `--rgb` to customize the diff's color
-    - `--rgba` to customaize the diff's color including alpha value (ignores `--alpha`)
+    ~~- `--rgba` to customaize the diff's color including alpha value (ignores `--alpha`)~~
     - `--batch` compare one image to many different images
     - `--invert` color in the pixels that are not different
     - `--unsafe` enable "unsafe mode", to compare pixels that are larger than the avarage pixel art
     - `--verbose` how many pixels were changed, removed, and added
+    - `--quiet` 
     - `--show` shows the image in the default image viewer app. can be used with `--no-save` to only preview the output
     - `--gif` saves image1, image2, and the diff as 1 gif
     - `--save-img-mask`

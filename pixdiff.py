@@ -50,7 +50,9 @@ def main():
     # assign arguments as variables
     image1_path = args.image1
     image2_path = args.image2
-    alpha = args.alpha # an optional flag that defaults to 128 if not included
+
+    # an optional flag that defaults to (255, 0, 0, 128) if not included
+    rgba = tuple(args.rgba) # convert to tuple
 
     # =====================================
     #   create output path
@@ -74,7 +76,7 @@ def main():
     #   image1 is the original image1 as an Image obj
     #   mask is an Image obj that colors the pixels that are different in image1 and image2
     #   diff_coords is an np array for csv output
-    image1, mask, diff_coords = compare(image1_path, image2_path, alpha)
+    image1, mask, diff_coords = compare(image1_path, image2_path, rgba)
 
     # =====================================
     #   saving the output file (image)
@@ -133,8 +135,8 @@ def run_argparse():
         'save options', 
         'options for exporting files.'
     )
-    rgba_opts = parser.add_argument_group(
-        'rgba options', 
+    processing_opts = parser.add_argument_group(
+        'processing options', 
         'options for processing output files.'
     )
 
@@ -145,14 +147,14 @@ def run_argparse():
     parser.add_argument(
         'image1',
         type=str,
-        metavar="IMAGE1",
+        metavar="<IMAGE1>",
         help="the first image to compare and create a diff of."
     )
 
     parser.add_argument(
         'image2',
         type=str,
-        metavar="IMAGE2",
+        metavar="<IMAGE2>",
         help="the second image to compare with the first image."
     )
 
@@ -188,7 +190,7 @@ def run_argparse():
     save_opts.add_argument(
         '--save-csv',
         action='store_true',
-        help='save every changed pixel by x, y coordinates to a csv file. the CSV file is not affected by --save-none.'
+        help='save every changed pixel by x, y coordinates to a csv file. the csv file is not affected by --save-none.'
     )
 
     # =====================================
@@ -201,13 +203,12 @@ def run_argparse():
         help='specify the name and relative path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
-    # RGBA options
-
-    rgba_opts.add_argument('--alpha', type=int,
-        choices=range(1, 256), # range(start, stop) so, list = 1 < range < 256
-        default=128, # default value
-        metavar="<A>",
-        help='an integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128)'
+    processing_opts.add_argument('--rgba', type=int,
+        choices=range(0, 256), # range(start, stop) so, list = 0 =< range < 256
+        nargs=4,
+        default=(255, 0, 0, 128), # default value
+        metavar=("<R>", "<G>", "<B>", "<A>"),
+        help='4 integer values from 0 to 255 that determines the diff mask color and opacity (default: 255 0 0 128)'
     )
 
     # return parsed args
@@ -274,12 +275,12 @@ def load_image(image_path):
 
 
 
-def compare(image1_path, image2_path, alpha_value=128):
+def compare(image1_path, image2_path, rgba=(255, 0, 0, 128)):
     """
     Compare two images pixel by pixel. 
     Each pixel diff is detected comparing the RGBA value of each pixel.
 
-    Args: image1_path, image2_path (paths to images as strings)
+    Args: image1_path, image2_path (paths to images as strings), rgba (tuple, the color of the diff mask)
     Returns: image1 (Image obj), mask (Image obj), differences (np array with x,y diff coordinates)
     """
     # load the two images as PIL objects
@@ -308,7 +309,7 @@ def compare(image1_path, image2_path, alpha_value=128):
     # create a mask image with the same size as the original images
     mask = Image.new('RGBA', image1.size, (0, 0, 0, 0))  # transparent background
 
-    red_color = (255, 0, 0, alpha_value)  # red with 50% transparency
+    red_color = rgba  # default rgba is red with 50% transparency
 
     # set the pixels in the mask to red where differences are found
     for y, x in zip(differences[0], differences[1]):
