@@ -5,40 +5,20 @@
 """
 pixdiff.py
 
-A simple script to identify pixel-by-pixel differences between two images. 
-Recommended for pixel art.
+A simple python script to identify pixel-by-pixel differences between two images. 
+Only tested for pixel art.
 
-It uses Pillow to interperet images into objects and into NumPy arrays for better performance.
-The RGBA value of each pixel of the two array is compared. The differences are stored into 
-another NumPy array. The result of the diff is configurable, with the default setting generating 
-an output file that overlays a color mask on the first image, highlighting the pixels where 
-differences are found.
+It uses Pillow (PIL) to interperet images into objects and into NumPy arrays for 
+better performance. The RGBA value of each pixel of the two array is compared. 
+The differences are then stored into another NumPy array. The result of the diff 
+is configurable, with the default setting generating an output file that overlays 
+a color mask on the first image, highlighting the pixels where differences are found.
 
-Below are the commands and optional flags you can use, which can also be viewed using --help || -h
+Currently, you are only able to run this script using the names of the images 
+(if in the same directory) or the relative path to the images, not an absolute path. 
+The visual output will always be a PNG file, regardless of your input file.
 
-positional arguments:
-    image1
-        the first image to compare and create a diff of.
-    image2
-        the second image to compare with the first image.
-
-optional arguments:
-    -h, --help
-        show this help message and exit
-    --version, -v 
-        show the program version.
-    --save-mask    
-        save the diff mask with no original image under it.
-    --save-none    
-        don't save or output the diff image file.
-        will cause pixdiff to not generate anything
-        unless specified by another flag.
-    --save-csv     
-        save every changed pixel by x, y coordinates
-        to a csv file. is not effected by save-none
-    --alpha INT    
-        an integer value from 1 to 255 that determines
-        the diff mask opacity/alpha value (default: 128)
+See 'pixdiff --help' for more info
 """
 
 import argparse
@@ -193,7 +173,7 @@ def run_argparse():
     parser.add_argument('--path', type=str,
         default=None,
         metavar="<OUTPUT_FILE_PATH>",
-        help='specify the name and path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
+        help='specify the name and relative path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
     # RGBA options
