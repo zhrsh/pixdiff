@@ -4,6 +4,10 @@
     - ~~`--no_save` don't save the diff image~~
     - `--path "<string path>"` to specify the diff result name or path. the default is `<image1>` + `_diff` + `<file_extension>` in the current working directory
     - ~~`--pos` to return the coordinates/positions changed and print to screen.~~
+    - `--rgb` to customize the diff's color
+    - `--rgba` to customaize the diff's color including alpha value
+    - `--batch` compare one image to many different images
+    - `--invert` color in the pixels that are not different
     
 - Make diff mask color coded according to type of change
     - `green_color = (0, 255, 0, 128)` for added pixels (from (x, x, x, 0) to (x, x, x, n), with n=1–255)
