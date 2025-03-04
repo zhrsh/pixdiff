@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
-# Author: Zahra A. S. <182934048+zhrsh@users.noreply.github.com>
-
 """
+This script is licensed under the MIT License. See LICENSE for more info.
+
+Copyright (c) 2025 Zahra A. S.
+Email: 182934048+zhrsh@users.noreply.github.com
+
 pixdiff.py
 
 A simple python script to identify pixel-by-pixel differences between two images. 
@@ -18,7 +21,7 @@ Currently, you are only able to run this script using the names of the images
 (if in the same directory) or the relative path to the images, not an absolute path. 
 The visual output will always be a PNG file, regardless of your input file.
 
-See 'pixdiff --help' for more info
+See 'pixdiff --help' for more info.
 """
 
 import argparse
