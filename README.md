@@ -45,7 +45,7 @@ The script will output `example1_diff.png`, which looks like this:
   <img src="readme_images/example_default.png" width="256">
 </p>
 
-This is just `example1.png` overlayed by the differences found in `example2.png` (the highlights on the leaves and trunk). By default, the mask overlay is the color red  with an alpha value of 128. This can be modified using optional arguments.
+This is just `example1.png` overlayed by the differences found in `example2.png` (the highlights on the leaves and trunk). By default, the mask overlay is the color red with an alpha value of 128. This can be modified using optional arguments.
 
 ## Optional Arguments
 
@@ -69,14 +69,14 @@ Below are the optional arguments and flags you can use, which can also be viewed
 - `--path <OUTPUT_FILE_PATH>`
     - Specify the name and relative path of the output file, whether an image or CSV. The file extension should not be specified (default: `image1_path + "_diff"`).
 
-- [`--alpha <ALPHA_VALUE>`](#--alpha)
-    - An integer value from 1 to 255 that determines the diff mask opacity/alpha value (default: 128).
+- [`--rgba <R> <G> <B> <A>`](#--rgba)
+    - 4 integer values from 0 to 255 that will determine the diff mask color and opacity (default: 255 0 0 128)
 
 ---
 
 ### `--save-mask`
 
-A flag that, when included, saves the default diff mask without any image under it. Usefeul if you want to work with the diff pixels in your art program.
+A flag that, when included, saves the default diff mask without any image under it. Usefeul if you want to work with the diff mask pixels in your art program.
 
 ```bash
 pixdiff example1.png example2.png --save-mask
@@ -90,30 +90,34 @@ pixdiff example1.png example2.png --save-mask
 
 ---
 
-### `--alpha`
+### `--rgba`
 
-A optional argument that allows you to control the alpha value/opacity of the diff mask. It requires a secondary argument: an integer value from 1 to 255 that determines the diff mask alpha value. Without this argument, the default alpa value is 128. 
+A optional argument that allows you to control the color and opacity of the diff mask (RGBA values). This option requires four supplementary arguments representing the Red, Green, Blue, and Alpha (opacity) values. Each must be integers with the value from 1 to 255. Without this argument, the default RGBA value is (255, 0, 0, 128).
+
+Example:
 
 ```bash
-pixdiff example1.png example2.png --alpha 250
+pixdiff example1.png example2.png --rgba 94 48 235 250
 ```
 
 <p float="left">
   <img src="readme_images/example1.png" width="128">
   <img src="readme_images/example2.png" width="128">
-  <img src="readme_images/example_alpha.png" width="128">
+  <img src="readme_images/example_rgba.png" width="128">
 </p>
 
-Using `--save-mask` and `--alpha` together
+Another example:
+
+Using `--save-mask` and `--rgba` together
 
 ```bash
-pixdiff example1.png example2.png --save-mask --alpha 255
+pixdiff example1.png example2.png --save-mask --rgba 94 48 235 250
 ```
 
 <p float="left">
   <img src="readme_images/example1.png" width="128">
   <img src="readme_images/example2.png" width="128">
-  <img src="readme_images/example_mask_alpha.png" width="128">
+  <img src="readme_images/example_mask_rgba.png" width="128">
 </p>
 
 ---
