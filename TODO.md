@@ -6,13 +6,13 @@
     - ~~`--pos` to return the coordinates/positions changed and print to screen.~~
     ~~- `--rgba` to customaize the diff's color including alpha value (ignores `--alpha`)~~
     - `--batch` compare one image to many different images
-    - `--invert` color in the pixels that are not different
+    - `--inverse` color in the pixels that are not different
     - `--unsafe` enable "unsafe mode", to compare pixels that are larger than the avarage pixel art
     - `--verbose` `-v` how many pixels were changed, removed, and added
     - `--quiet` `-q`
-    - `--show` shows the image in the default image viewer app. can be used with `--no-save` to only preview the output
+    - `--show` shows the image in the default image viewer app. can be used with `--no-save` to only preview the output (should be default for git integration)
     - `--gif` saves image1, image2, and the diff as 1 gif
-    - `--save-img-mask`
+    - `--save-img-mask` is the same as `--save-mask` but uses the pixels of the second image for the mask instead.
 
 - Make diff mask color coded according to type of change
     - `green_color = (0, 255, 0, 128)` for added pixels (from (x, x, x, 0) to (x, x, x, n), with n=1–255)
