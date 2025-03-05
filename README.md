@@ -123,18 +123,18 @@ pixdiff example1.png example2.png --save-mask --rgba 94 48 235 250
 ---
 
 ### `--save-csv`
-Save every changed pixel by x, y coordinates to a CSV file. The CSV file is not affected by `--save-none`.
-
-Without the `--save-none` flag, it will save both a CSV file and a PNG file:
+Save every changed pixel by x, y coordinates to a CSV file. The CSV file is not affected by `--save-none`. By default, it will save both a CSV file and a PNG file:
 
 ```bash
-pixdiff example1.png example2.png --save-csv
+pixdiff example1.png example2.png --save-csv 
+# saves 'example1_diff.png' and 'example1_diff.csv'
 ```
 
 If you don't need the PNG file, you can include `--save-none`:
 
 ```bash
 pixdiff example1.png example2.png --save-csv --save-none
+# saves 'example1_diff.csv'
 ```
 
 ## License

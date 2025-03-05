@@ -8,8 +8,8 @@
     - `--batch` compare one image to many different images
     - `--invert` color in the pixels that are not different
     - `--unsafe` enable "unsafe mode", to compare pixels that are larger than the avarage pixel art
-    - `--verbose` how many pixels were changed, removed, and added
-    - `--quiet` 
+    - `--verbose` `-v` how many pixels were changed, removed, and added
+    - `--quiet` `-q`
     - `--show` shows the image in the default image viewer app. can be used with `--no-save` to only preview the output
     - `--gif` saves image1, image2, and the diff as 1 gif
     - `--save-img-mask`
