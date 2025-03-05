@@ -87,12 +87,9 @@ def main():
         # save nothing if the --no_save flag was included
         # (perhaps they just want to know the coordinates)
         printf("no diff image file saved")
-    elif args.save_mask:
-        # save diff mask only if --mask flag was included
-        save_img(image1, mask, output_path, mask_only=True)
     else:
         # default save (image1 overlayed with the diff mask)
-        save_img(image1, mask, output_path, mask_only=False)
+        save_img(image1, mask, output_path, mask_only=args.save_mask) # args.save_mask is a boolean
 
     # =====================================
     #   saving the output file (csv)
