@@ -356,6 +356,8 @@ def compare(image1_path, image2_path, rgba=(255, 0, 0, 128)):
     # set the pixels in the mask to red where differences are found
     draw_mask.point(diff_coords, rgba) # default rgba is red with 50% transparency
 
+    printf(f"differing pixels found: {len(diff_coords)}")
+
     return image1, mask, diff_coords
 
 
