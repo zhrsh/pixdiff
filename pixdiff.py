@@ -61,7 +61,8 @@ def main():
     # check if --color is provided
     if args.color:
         try:
-            rgba = ImageColor.getcolor(args.color, 'RGBA')
+            rgba = ImageColor.getcolor(args.color, 'RGB')
+            rgba += (128,) # append default alpha value
         except ValueError:
             printf(f"error: '{args.color}' is not a valid CSS color name.")
             sys.exit(1)
