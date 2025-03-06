@@ -35,7 +35,7 @@ import numpy as np
 
 
 NAME = "pixdiff"
-VERSION = "0.2.0"
+VERSION = "0.4.3"
 
 
 
