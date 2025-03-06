@@ -290,6 +290,39 @@ def load_image(image_path):
 
 
 
+def compare_validator(image1, image2, max_resolution=1024):
+    """
+    Image comparisson validator. Makes sure that two images are ready and valid for comparisson.
+
+    Args: 
+        image1 (Image obj): First image to compare.
+        image2 (Image obj): Second image to compare.
+        max_resolution (int): Maximum total number of pixels allowed for comparison.
+
+    Returns: 
+        bool: True if images are valid, False if images are not valid for comparison.
+    """
+    # check if images are the same format
+    if image1.format != image2.format:
+        printf("error: images must be the same format for comparison.")
+        return False
+
+    # check if images are the same in resolution (width, height)
+    elif image1.size != image2.size:
+        printf("error: images must be the same size for comparison.")
+        return False
+
+    # check if image are too large in resolution (total must be less than max_resolution)
+    elif image1.size[0] + image1.size[1] > max_resolution:
+        printf("error: the images are too large in resolution for comparison.")
+        return False
+        # no need to check image2 because they have the same resolution
+
+    else:
+        return True
+
+
+
 def compare(image1_path, image2_path, rgba=(255, 0, 0, 128)):
     """
     Compare two images pixel by pixel. 
@@ -299,20 +332,12 @@ def compare(image1_path, image2_path, rgba=(255, 0, 0, 128)):
     Returns: image1 (Image obj), mask (Image obj), differences (np array with x,y diff coordinates)
     """
     # load the two images as PIL objects
-    # includes error handling
     image1 = load_image(image1_path)
     image2 = load_image(image2_path)
 
-    # check if images are the same in resolution (width, height)
-    if image1.size != image2.size:
-        printf("error: images must be the same size for comparison.")
+    # check if images are valid for comparisson, returns False if images are not valid
+    if compare_validator(image1, image2) is False:
         sys.exit(1)
-
-    # check if images are too large in resolution (width, height)
-    if image1.size[0] + image2.size[1] > 2048:
-        printf("error: the images are too large in resolution for comparison.")
-        sys.exit(1)
-        # no need to do image2 because they have the same resolution
 
     # convert images to NumPy arrays
     array1 = np.array(image1)
