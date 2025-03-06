@@ -60,11 +60,35 @@ def main():
 
     # check if --color is provided
     if args.color:
-        try:
-            rgba = ImageColor.getcolor(args.color, 'RGB')
-            rgba += (128,) # append default alpha value
-        except ValueError:
-            printf(f"error: '{args.color}' is not a valid CSS color name.")
+        # parse the list first. should be [str] or [str, int]
+        # if only 1 arg provided. should be the str of the color name
+        if len(args.color) == 1:
+            try:
+                rgba = ImageColor.getcolor(args.color[0], 'RGB')
+                rgba += (128,) # append default alpha value
+            except ValueError:
+                printf(f"error: '{args.color[0]}' is not a valid CSS color name.")
+                sys.exit(1)
+        # if 2 args provided. should be [str, int] with 0 <= int <= 255
+        elif len(args.color) == 2:
+            # convert 2nd arg to int first
+            try:
+                custom_alpha = int(args.color[1])
+                if 0 <= custom_alpha <= 255:
+                    try:
+                        rgba = ImageColor.getcolor(args.color[0], 'RGB')
+                        rgba += (custom_alpha,) # append custom alpha value
+                    except ValueError:
+                        printf(f"error: '{args.color[0]}' is not a valid CSS color name.")
+                        sys.exit(1)
+                else:
+                    printf(f"error: '{args.color[1]}' must be an integer between 0 and 255.")
+                    sys.exit(1)
+            except ValueError:
+                printf(f"error: '{args.color[1]}' must be an integer between 0 and 255.")
+                sys.exit(1)
+        else:
+            printf("error: --color can only accept 1 to 2 arguments.")
             sys.exit(1)
 
     # check if --rgba is provided
@@ -222,8 +246,9 @@ def run_argparse():
     )
 
     processing_opts.add_argument('--color', type=str,
-        metavar="<COLOR_STRING>",
-        help='alternative to --rgba that lets you use CSS color name strings from pillow. ignored if --rgba is provided.'
+        nargs="+",
+        metavar=("<COLOR_STRING>", "ALPHA"),
+        help='alternative to --rgba that lets you use CSS color name strings from pillow. optionally, provide an alpha value (0-255), if not, the default alpha value of 128 will be used. ignored if --rgba is present.'
     )
 
     # return parsed args
