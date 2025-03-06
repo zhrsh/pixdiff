@@ -13,6 +13,7 @@
     - `--show` shows the image in the default image viewer app. can be used with `--no-save` to only preview the output (should be default for git integration)
     - `--gif` saves image1, image2, and the diff as 1 gif
     - `--save-img-mask` is the same as `--save-mask` but uses the pixels of the second image for the mask instead.
+    - `--color` alternative to `--rgba` that lets you use human readable colors from pillow. ignored if rgba is present.
 
 - Make diff mask color coded according to type of change
     - `green_color = (0, 255, 0, 128)` for added pixels (from (x, x, x, 0) to (x, x, x, n), with n=1–255)
