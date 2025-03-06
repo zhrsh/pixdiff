@@ -60,7 +60,11 @@ def main():
 
     # check if --color is provided
     if args.color:
-        rgba = ImageColor.getcolor(args.color, 'RGBA')
+        try:
+            rgba = ImageColor.getcolor(args.color, 'RGBA')
+        except ValueError:
+            printf(f"error: '{args.color}' is not a valid CSS color name.")
+            sys.exit(1)
 
     # check if --rgba is provided
     if args.rgba:
