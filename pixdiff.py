@@ -29,7 +29,7 @@ import csv
 import os
 import sys
 
-from PIL import Image, ImageColor, UnidentifiedImageError
+from PIL import Image, ImageColor, ImageDraw, UnidentifiedImageError
 import numpy as np
 
 
@@ -320,17 +320,18 @@ def compare(image1_path, image2_path, rgba=(255, 0, 0, 128)):
 
     # compare the two arrays including the alpha channel
     differences = np.where(array1 != array2)  # compare all channels (RGBA)
+    # get the coords and put them in a list of unique tuple pairs (x, y)
+    diff_coords = list(set(zip(differences[1], differences[0])))
 
     # create a mask image with the same size as the original images
     mask = Image.new('RGBA', image1.size, (0, 0, 0, 0))  # transparent background
 
-    red_color = rgba  # default rgba is red with 50% transparency
-
+    # create draw object to draw on empty mask
+    draw_mask = ImageDraw.Draw(mask)
     # set the pixels in the mask to red where differences are found
-    for y, x in zip(differences[0], differences[1]):
-        mask.putpixel((x, y), red_color)
+    draw_mask.point(diff_coords, rgba) # default rgba is red with 50% transparency
 
-    return image1, mask, differences
+    return image1, mask, diff_coords
 
 
 
@@ -385,25 +386,12 @@ def save_csv(differences, output_path):
 
     csv_file_path = f"{output_path}.csv"
 
-    # get the coordinates of the differences
-    diff_coords = list(zip(differences[1], differences[0]))  # (x, y) format
-
-    # remove duplicates while preserving order
-    unique_diff_coords = []
-    # a set to track the coordinates that have already been encountered
-    seen = set()
-    for coord in diff_coords:
-        if coord not in seen:
-            # append to both seen and unique_diff_coords
-            seen.add(coord)
-            unique_diff_coords.append(coord)
-
     try:
         # write the differences to a CSV file
         with open(csv_file_path, mode='w', newline='', encoding='utf-8') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(['x', 'y'])     # header
-            writer.writerows(unique_diff_coords)   # write the coordinates
+            writer.writerows(differences)   # write the coordinates
         printf(f"successfully saved differences to {csv_file_path}")
 
     except FileNotFoundError:
