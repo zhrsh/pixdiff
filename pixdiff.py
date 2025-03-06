@@ -29,7 +29,7 @@ import csv
 import os
 import sys
 
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageColor, UnidentifiedImageError
 import numpy as np
 
 
@@ -51,8 +51,20 @@ def main():
     image1_path = args.image1
     image2_path = args.image2
 
-    # an optional flag that defaults to (255, 0, 0, 128) if not included
-    rgba = tuple(args.rgba) # convert to tuple
+    # =====================================
+    #   create rgba color
+    # =====================================
+
+    # initialize rgba variable to default value
+    rgba = (255, 0, 0, 128)
+
+    # check if --color is provided
+    if args.color:
+        rgba = ImageColor.getcolor(args.color, 'RGBA')
+
+    # check if --rgba is provided
+    if args.rgba:
+        rgba = tuple(args.rgba)  # convert to tuple
 
     # =====================================
     #   create output path
@@ -142,15 +154,13 @@ def run_argparse():
     # =====================================
 
     parser.add_argument(
-        'image1',
-        type=str,
+        'image1', type=str,
         metavar="<IMAGE1>",
         help="the first image to compare and create a diff of."
     )
 
     parser.add_argument(
-        'image2',
-        type=str,
+        'image2', type=str,
         metavar="<IMAGE2>",
         help="the second image to compare with the first image."
     )
@@ -195,7 +205,6 @@ def run_argparse():
     # =====================================
 
     save_opts.add_argument('--path', type=str,
-        default=None,
         metavar="<FILE_PATH>",
         help='specify the name and relative path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
@@ -203,9 +212,13 @@ def run_argparse():
     processing_opts.add_argument('--rgba', type=int,
         choices=range(0, 256), # range(start, stop) so, list = 0 =< range < 256
         nargs=4,
-        default=(255, 0, 0, 128), # default value
         metavar=("<R>", "<G>", "<B>", "<A>"),
         help='4 integer values from 0 to 255 that determines the diff mask color and opacity (default: 255 0 0 128)'
+    )
+
+    processing_opts.add_argument('--color', type=str,
+        metavar="<COLOR_STRING>",
+        help='alternative to --rgba that lets you use CSS color name strings from pillow. ignored if --rgba is provided.'
     )
 
     # return parsed args
