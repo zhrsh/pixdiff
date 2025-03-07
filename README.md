@@ -54,7 +54,7 @@ Below are the optional arguments and flags you can use, which can also be viewed
 - `-h`, `--help`
     - Show this help message and exit.
 
-- `--version`, `-v`
+- `-v`, `--version`
     - Show the program version.
 
 - [`--save-mask`](#--save-mask)
@@ -90,6 +90,7 @@ pixdiff example1.png example2.png --save-mask
 <p float="left">
   <img src="readme_images/example1.png" width="128">
   <img src="readme_images/example2.png" width="128">
+  <img src="readme_images/arrow.png" height="128">
   <img src="readme_images/example_mask.png" width="128">
 </p>
 
@@ -108,6 +109,7 @@ pixdiff example1.png example2.png --rgba 94 48 235 250
 <p float="left">
   <img src="readme_images/example1.png" width="128">
   <img src="readme_images/example2.png" width="128">
+  <img src="readme_images/arrow.png" height="128">
   <img src="readme_images/example_rgba.png" width="128">
 </p>
 
@@ -122,6 +124,7 @@ pixdiff example1.png example2.png --save-mask --rgba 94 48 235 250
 <p float="left">
   <img src="readme_images/example1.png" width="128">
   <img src="readme_images/example2.png" width="128">
+  <img src="readme_images/arrow.png" height="128">
   <img src="readme_images/example_mask_rgba.png" width="128">
 </p>
 
@@ -137,6 +140,9 @@ pixdiff example1.png example2.png --color "hotpink"
 ```
 
 <p float="left">
+  <img src="readme_images/example1.png" width="128">
+  <img src="readme_images/example2.png" width="128">
+  <img src="readme_images/arrow.png" height="128">
   <img src="readme_images/example_color.png" width="128">
 </p>
 
@@ -147,6 +153,9 @@ pixdiff example1.png example2.png --color "hotpink" 255
 ```
 
 <p float="left">
+  <img src="readme_images/example1.png" width="128">
+  <img src="readme_images/example2.png" width="128">
+  <img src="readme_images/arrow.png" height="128">
   <img src="readme_images/example_color_alpha.png" width="128">
 </p>
 
