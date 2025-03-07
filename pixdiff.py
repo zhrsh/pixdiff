@@ -199,7 +199,7 @@ def run_argparse():
     # =====================================
 
     parser.add_argument(
-        '--version', '-v', 
+        '-v', '--version', 
         action='version',
         version=f'%(prog)s {VERSION}',
         help='show the program version.'
