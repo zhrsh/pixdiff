@@ -19,5 +19,11 @@ pixdiff readme_images/example1.png readme_images/example2.png --path "readme_ima
 # only save mask and use a custom rgba value
 pixdiff readme_images/example1.png readme_images/example2.png --path "readme_images/example_mask_rgba" --save-mask --rgba 94 48 235 250
 
+# use a color name without specifiying alpha
+pixdiff readme_images/example1.png readme_images/example2.png --path "readme_images/example_color" --color "hotpink"
+
+# use a color name with alpha
+pixdiff readme_images/example1.png readme_images/example2.png --path "readme_images/example_color_alpha" --color "hotpink" 255
+
 # save none and save csv
 pixdiff readme_images/example1.png readme_images/example2.png --path "readme_images/example_csv" --save-none --save-csv
