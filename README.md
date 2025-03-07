@@ -72,11 +72,16 @@ Below are the optional arguments and flags you can use, which can also be viewed
 - [`--rgba <R> <G> <B> <A>`](#--rgba)
     - 4 integer values from 0 to 255 that will determine the diff mask color and opacity (default: 255 0 0 128)
 
+- [`--color <COLOR_STRING>`](#--color)
+    - An alternative to --rgba that lets you use CSS color name strings from pillow. This flag is ignored if `--rgba` is provided.
+
 ---
 
 ### `--save-mask`
 
 A flag that, when included, saves the default diff mask without any image under it. Usefeul if you want to work with the diff mask pixels in your art program.
+
+Example:
 
 ```bash
 pixdiff example1.png example2.png --save-mask
@@ -122,6 +127,33 @@ pixdiff example1.png example2.png --save-mask --rgba 94 48 235 250
 
 ---
 
+### `--color`
+An alternative to the `--rgba` flag that lets you use general HTML/CSS color name strings from Pillow. The RGB values are decided by the chosen color keyword, though the alpha value will be 128 unless a second argument is provided. This flag is ignored if `--rgba` is provided, regardless of the order of arguments.
+
+Example (using only 1 argument):
+
+```bash
+pixdiff example1.png example2.png --color "hotpink"
+```
+
+<p float="left">
+  <img src="readme_images/example_color.png" width="128">
+</p>
+
+Alternatively, you can include a second argument after the color name and the `--color` flag to specifiy the opacity/alpha value (an integer from 0 to 255)
+
+```bash
+pixdiff example1.png example2.png --color "hotpink" 255
+```
+
+<p float="left">
+  <img src="readme_images/example_color_alpha.png" width="128">
+</p>
+
+You can find the list of recognized color keywords [here](https://www.w3.org/TR/SVG11/types.html#ColorKeywords).
+
+---
+
 ### `--save-csv`
 Save every changed pixel by x, y coordinates to a CSV file. The CSV file is not affected by `--save-none`. By default, it will save both a CSV file and a PNG file:
 
@@ -139,6 +171,6 @@ pixdiff example1.png example2.png --save-csv --save-none
 
 ## License
 
-pixdiff.py and example_batch.sh, are licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
+The contents of this repository, exluding the readme_images directory, are licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
 
 <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">The example images in this README</span> by <span property="cc:attributionName">Zahra A. S.</span> are licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""></a></p>
