@@ -161,7 +161,8 @@ def run_argparse():
     """
 
     parser = argparse.ArgumentParser(
-        description='A simple script to identify pixel-by-pixel differences between two images.',
+        description='A simple script to identify pixel-by-pixel differences between two images. This script is under the MIT License. Copyright (c) 2025 Zahra A. S.',
+        epilog='For more information, see documentation at github.com/zhrsh/pixdiff',
         prog=NAME
     )
 
