@@ -1,12 +1,14 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 DIR_USR="$HOME/bin/"
+NAME="pixdiff"
+EXTENSION=".py"
 
-cp pixdiff.py pixdiff
-chmod +x pixdiff
+cp "$NAME$EXTENSION" "$NAME"
+chmod +x "$NAME"
 
 if [ -d "$DIR_USR" ]; then
-    mv pixdiff "$DIR_USR"
+    mv "$NAME" "$DIR_USR"
 fi
 
 # alternative installation paths to be added later
