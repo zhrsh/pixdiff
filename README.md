@@ -2,15 +2,26 @@
 
 A simple python script to identify pixel-by-pixel differences between two images. Only tested for pixel art.
 
-It uses Pillow (PIL) to interperet images into objects and into NumPy arrays for better performance. The RGBA value of each pixel of the two arrays is compared. The differences are then stored into another NumPy array. The result of the diff is configurable, with the default setting generating an output file that overlays a color mask on the first image, highlighting the pixels where differences are found.
+It uses [Pillow](https://github.com/python-pillow/Pillow/) (PIL) to interperet images into objects and into [NumPy](https://numpy.org) arrays for better performance. The RGBA value of each pixel of the two arrays is compared. The differences are then stored into another NumPy array. The result of the diff is configurable, with the default setting generating an output file that overlays a color mask on the first image, highlighting the pixels where differences are found.
 
 Currently, you are only able to run this script using the names of the images (if in the same directory) or the relative path to the images, not an absolute path. The visual output will always be a PNG file, regardless of your input file.
 
 ## Dependencies
 
-- Python 3.9.6 or higher
-- [Pillow](https://github.com/python-pillow/Pillow/)
-- [NumPy](https://numpy.org)
+Python 3.9.6 or higher
+
+## Installation
+
+### Linux/MacOS/UNIX-like
+Assuming you have ~/bin as a PATH environment variable and python/pip installed, run this in your terminal:
+```bash
+python3 -m pip install --upgrade Pillow NumPy
+git clone https://github.com/zhrsh/pixdiff.git
+cd pixdiff
+./install.sh
+```
+
+You can modify the DIR_USR variable in install.sh if a different installation path is needed.
 
 ## Basic Usage
 
