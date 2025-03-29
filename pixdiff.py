@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This script is licensed under the MIT License. See LICENSE for more info.
+This script is open source under the MIT License. See LICENSE for more info.
 
 Copyright (c) 2025 Zahra A. S.
 Email: 182934048+zhrsh@users.noreply.github.com
