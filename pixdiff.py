@@ -27,6 +27,7 @@ See 'pixdiff --help' for more info.
 import argparse
 import csv
 import os
+import subprocess
 import sys
 
 from PIL import Image, ImageColor, ImageDraw, UnidentifiedImageError
@@ -35,7 +36,8 @@ import numpy as np
 
 
 NAME = "pixdiff"
-VERSION = "0.4.3"
+VERSION = "0.5.3"
+TEMP_FILE_NAME = "._export_temp.png"
 
 
 
@@ -47,9 +49,16 @@ def main():
     """
     args = run_argparse()
 
-    # assign arguments as variables
-    image1_path = args.image1
-    image2_path = args.image2
+    # git integration (1st arg: git, 2nd arg: path)
+    if args.image1 == "git":
+        print("pixdiff/git: USING GIT INTERGRATION") # DEBUG TEMP
+        image1_path = args.image2 # set 1st img as the path
+        git(image1_path) # create temp img '._export_temp.png'
+        image2_path = TEMP_FILE_NAME # set temp img as 2nd img
+    else:
+        # assign arguments as variables
+        image1_path = args.image1
+        image2_path = args.image2
 
     # =====================================
     #   create rgba color
@@ -139,6 +148,19 @@ def main():
     # save csv file of the coordinates if --csv_save flag was included
     if args.save_csv:
         save_csv(diff_coords, output_path)
+
+    # if using git, delete temp file
+    if args.image1 == "git":
+        # remove the file
+        try:
+            os.remove(TEMP_FILE_NAME)
+            print(f"pixdiff/git: {TEMP_FILE_NAME} has been removed successfully.") # DEBUG TEMP
+        except FileNotFoundError:
+            print(f"error: the file {TEMP_FILE_NAME} does not exist.")
+        except PermissionError:
+            print(f"error: permission denied, unable to delete {TEMP_FILE_NAME}.")
+        except Exception as e:
+            print(f"an unexpected error occurred: {e}")
 
 
 
@@ -454,6 +476,58 @@ def save_csv(differences, output_path):
     except Exception as e:
         printf(f"error: an unexpected error occurred:\n{e}")
         raise  # re-raise the exception to allow it to propagate
+
+
+
+def git(path: str):
+    """Retrieve a file from the latest commit in a git repository and save it to a temporary file."""
+    if not is_git_repository():
+        print("error: you are not in a git repository.")
+        sys.exit(1)
+
+    if not path:
+        print("error: no file path provided.")
+        sys.exit(1)
+
+    try:
+        with open(TEMP_FILE_NAME, 'w', encoding="utf-8") as temp_file:
+            subprocess.run(
+                ['git', 'show', f'HEAD:{path}'],
+                stdout=temp_file,
+                stderr=subprocess.PIPE,  # Capture standard error
+                check=True
+            )
+        print(f"file '{path}' has been successfully retrieved and saved to '{TEMP_FILE_NAME}'.")
+    except subprocess.CalledProcessError as e:
+        print(f"error: failed to retrieve file '{path}'.")
+        print(f"git error: {e.stderr.decode().strip()}")
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"error: the file '{path}' does not exist in the repository.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"an unexpected error occurred: {e}")
+        sys.exit(1)
+
+
+
+def is_git_repository() -> bool:
+    try:
+        # run 'git rev-parse --is-inside-work-tree'
+        result = subprocess.run(
+            ['git', 'rev-parse', '--is-inside-work-tree'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False
+        )
+        # if the command was successful, it means we are in a git repository
+        return result.returncode == 0 and result.stdout.strip() == 'true'
+    except FileNotFoundError:
+        # git is not installed or not found in the PATH
+        return False
+
+
 
 if __name__ == "__main__":
     main()
