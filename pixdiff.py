@@ -161,6 +161,7 @@ def main():
             print(f"error: permission denied, unable to delete {TEMP_FILE_NAME}.")
         except Exception as e:
             print(f"an unexpected error occurred: {e}")
+            raise  # re-raise the exception to allow it to propagate
 
 
 
@@ -510,8 +511,7 @@ def git(path: str):
         sys.exit(1)
     except Exception as e:
         print(f"an unexpected error occurred: {e}")
-        sys.exit(1)
-
+        raise  # re-raise the exception to allow it to propagate
 
 
 def is_git_repository() -> bool:
