@@ -235,19 +235,19 @@ def run_argparse():
     # save options
 
     save_opts.add_argument(
-        '--save-mask',
+        '-M', '--save-mask',
         action='store_true', # this will store True if the mask flag is present
         help='save the diff mask with no original image under it.'
     )
 
     save_opts.add_argument(
-        '--save-none',
+        '-N', '--save-none',
         action='store_true',
         help='don\'t save or output the diff image file. will cause pixdiff to not generate anything unless specified by another flag.'
     )
 
     save_opts.add_argument(
-        '--save-csv',
+        '-C', '--save-csv',
         action='store_true',
         help='save every changed pixel by x, y coordinates to a csv file. the csv file is not affected by --save-none.'
     )
@@ -256,19 +256,22 @@ def run_argparse():
     #   optional arguments
     # =====================================
 
-    save_opts.add_argument('--path', type=str,
+    save_opts.add_argument(
+        '--path', type=str,
         metavar="<FILE_PATH>",
         help='specify the name and relative path of the output file, whether an image or csv. file extension should not be specified (default: image1_path + "_diff")'
     )
 
-    processing_opts.add_argument('--rgba', type=int,
+    processing_opts.add_argument(
+        '--rgba', type=int,
         choices=range(0, 256), # range(start, stop) so, list = 0 =< range < 256
         nargs=4,
         metavar=("<R>", "<G>", "<B>", "<A>"),
         help='4 integer values from 0 to 255 that determines the diff mask color and opacity (default: 255 0 0 128)'
     )
 
-    processing_opts.add_argument('--color', type=str,
+    processing_opts.add_argument(
+        '-c', '--color', type=str,
         nargs="+",
         metavar=("<COLOR_STRING>", "ALPHA"),
         help='alternative to --rgba that lets you use CSS color name strings from pillow. optionally, provide an alpha value (0-255), if not, the default alpha value of 128 will be used. ignored if --rgba is present.'
