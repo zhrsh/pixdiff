@@ -12,7 +12,8 @@ Python 3.9.6 or higher
 
 ## Installation
 
-### Linux/MacOS/UNIX-like
+### Command Line (Linux/MacOS/UNIX-like)
+
 Assuming you have ~/bin as a PATH environment variable and python/pip installed, run this in your terminal:
 ```bash
 python3 -m pip install --upgrade Pillow NumPy
@@ -21,7 +22,17 @@ cd pixdiff
 ./install.sh
 ```
 
-You can modify the DIR_USR variable in install.sh if a different installation path is needed.
+You can add an argument to ./install.sh if a different installation path is needed.
+```bash
+git clone https://github.com/zhrsh/pixdiff.git
+cd pixdiff
+./install.sh DIFFERENT/INSTALL/PATH
+```
+
+### Manual installation
+
+Install the source code from the releases page, then drag and drop the `pixdiff` file into a directory registered in your PATH. Tip: run `echo $PATH` to view said directories.
+
 
 ## Basic Usage
 
